@@ -30,7 +30,7 @@ function homePage() {
     genericSection.classList.add('inactive');
     movieDetailSection.classList.add('inactive');
 
-    getTrendingMoviesPreview();
+    getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList);
     getCategoriesPreview();
 }
 function categoriesPage() {
@@ -51,7 +51,11 @@ function categoriesPage() {
 
     headerCategoryTitle.innerHTML = categoryName;
 
-    getMoviesByCategory(categoryId);
+    getAndAppendMovies('discover/movie', genericSection, {
+        params: {
+            with_genres: categoryId,
+        },
+    });
 }
 function movieDetailsPage() {
     headerSection.classList.add('header-container--long');

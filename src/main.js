@@ -1,5 +1,3 @@
-const movieList = [];
-
 const api = axios.create({
     baseURL: 'https://api.themoviedb.org/3',
     headers: {
@@ -9,31 +7,6 @@ const api = axios.create({
         'api_key': API_KEY,
     },
 });
-
-async function getTrendingMoviesPreview() {
-    const {data} = await api('trending/movie/week');
-    const movies = data.results;
-
-    trendingMoviesPreviewList.innerHTML = '';
-    
-    movies.forEach(movie => {
-        movieList.push(movie);
-
-        const movieContainer = document.createElement('div');
-        movieContainer.classList.add('movie-container');
-
-        const movieImg = document.createElement('img');
-        movieImg.classList.add('movie-img');
-        movieImg.setAttribute('alt', movie.title);
-        movieImg.setAttribute(
-            'src', 
-            'https://image.tmdb.org/t/p/w300/' + movie.poster_path
-        );
-    
-        movieContainer.appendChild(movieImg);
-        trendingMoviesPreviewList.appendChild(movieContainer);
-    });  
-}
 
 async function getCategoriesPreview() {
     const {data} = await api('genre/movie/list');
@@ -58,19 +31,12 @@ async function getCategoriesPreview() {
     });  
 }
 
-async function getMoviesByCategory(id) {
-    const {data} = await api('discover/movie', {
-        params: {
-            with_genres: id,
-        },
-    });
+async function getAndAppendMovies(path, parentSection, optionalConfig = {}) {
+    const {data} = await api(path, optionalConfig);
     const movies = data.results;
 
-    genericSection.innerHTML = '';
-    
+    parentSection.innerHTML = '';
     movies.forEach(movie => {
-        movieList.push(movie);
-
         const movieContainer = document.createElement('div');
         movieContainer.classList.add('movie-container');
 
@@ -83,6 +49,6 @@ async function getMoviesByCategory(id) {
         );
     
         movieContainer.appendChild(movieImg);
-        genericSection.appendChild(movieContainer);
-    });  
+        parentSection.appendChild(movieContainer);
+    });
 }
