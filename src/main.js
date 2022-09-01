@@ -1,4 +1,4 @@
-import {API_KEY} from "./secrets.js"
+const movieList = [];
 
 const api = axios.create({
     baseURL: 'https://api.themoviedb.org/3',
@@ -13,10 +13,10 @@ const api = axios.create({
 async function getTrendingMoviesPreview() {
     const {data} = await api('trending/movie/week');
     const movies = data.results;
-    console.log(movies, data);
     
-    const getTrendingPreviewMovieContainer = document.querySelector('#trendingPreview .trendingPreview-movieList');
     movies.forEach(movie => {
+        movieList.push(movie);
+
         const movieContainer = document.createElement('div');
         movieContainer.classList.add('movie-container');
 
@@ -29,7 +29,7 @@ async function getTrendingMoviesPreview() {
         );
     
         movieContainer.appendChild(movieImg);
-        getTrendingPreviewMovieContainer.appendChild(movieContainer);
+        trendingMoviesPreviewList.appendChild(movieContainer);
     });  
 }
 
@@ -37,7 +37,6 @@ async function getCategoriesPreview() {
     const {data} = await api('genre/movie/list');
 
     const categories = data.genres;
-    const previewCategoriesContainer = document.querySelector('#categoriesPreview .categoriesPreview-list');
     categories.forEach(categories => {
         const categoryContainer = document.createElement('div');
         categoryContainer.classList.add('category-container');
@@ -48,9 +47,6 @@ async function getCategoriesPreview() {
         categoryTitle.innerHTML = categories.name;
     
         categoryContainer.appendChild(categoryTitle);
-        previewCategoriesContainer.appendChild(categoryContainer);
+        categoriesPreviewList.appendChild(categoryContainer);
     });  
 }
-
-getTrendingMoviesPreview();
-getCategoriesPreview();
