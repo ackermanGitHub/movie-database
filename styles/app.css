@@ -28,6 +28,12 @@ html {
   background-color: var(--purple-medium-3);
 }
 
+img {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 body {
   background-color: var(--purple-light-1);
   color: var(--purple-dark-2);
@@ -123,8 +129,7 @@ button {
 }
 
 .header-container--long {
-  background-image: url('https://pics.filmaffinity.com/Deadpool-777527803-large.jpg');
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 19.27%, rgba(0, 0, 0, 0) 29.17%), url(https://pics.filmaffinity.com/Deadpool-777527803-large.jpg);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 19.27%, rgba(0, 0, 0, 0) 29.17%);
   background-size: cover !important;
   height: 480px;
   position: fixed;

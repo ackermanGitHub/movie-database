@@ -12,23 +12,7 @@ async function getCategoriesPreview() {
     const {data} = await api('genre/movie/list');
     const categories = data.genres;
 
-    categoriesPreviewList.innerHTML = '';
-
-    categories.forEach(category => {
-        const categoryContainer = document.createElement('div');
-        categoryContainer.classList.add('category-container');
-
-        const categoryTitle = document.createElement('h3');
-        categoryTitle.classList.add('category-title');
-        categoryTitle.setAttribute('id', 'id' + category.id);
-        categoryTitle.innerHTML = category.name;
-        categoryTitle.addEventListener('click', () => {
-            location.hash = `#category=${category.id}-${category.name}`;
-        });
-    
-        categoryContainer.appendChild(categoryTitle);
-        categoriesPreviewList.appendChild(categoryContainer);
-    });  
+    printCategories(categoriesPreviewList, categories);
 }
 
 async function getAndAppendMovies(path, parentSection, optionalConfig = {}) {
@@ -60,16 +44,26 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}) {
 async function getMovieDetails(movie_id) {
     const {data} = await api('movie/' + movie_id);
 
-    const headerContainer = document.querySelector('.header-container--long');
-    headerContainer.style.backgroundImage = `url('https://image.tmdb.org/t/p/w300/${data.poster_path}')`;
+    headerSection.style.background = `
+        linear-gradient(
+            180deg, 
+            rgba(0, 0, 0, 0.35) 19.27%, 
+            rgba(0, 0, 0, 0) 29.17% 
+        ),
+        url('https://image.tmdb.org/t/p/w500/${data.poster_path}')
+    `;
 
     movieDetailTitle.textContent = data.title;
     movieDetailDescription.textContent = data.overview;
     movieDetailScore.textContent = data.vote_average;
 
-    movieDetailCategoriesList.innerHTML = '';
-    
-    data.genres.forEach(category => {
+    printCategories(movieDetailCategoriesList, data.genres);
+}
+
+// utils
+function printCategories(parent, categories) {
+    parent.innerHTML = '';
+    categories.forEach(category => {
         const categoryContainer = document.createElement('div');
         categoryContainer.classList.add('category-container');
 
@@ -82,7 +76,6 @@ async function getMovieDetails(movie_id) {
         });
     
         categoryContainer.appendChild(categoryTitle);
-        movieDetailCategoriesList.appendChild(categoryContainer);
-    }); 
-
+        parent.appendChild(categoryContainer);
+    });  
 }
