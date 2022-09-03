@@ -85,6 +85,7 @@ function movieDetailsPage() {
     genericSection.classList.add('inactive');
     movieDetailSection.classList.remove('inactive');
 
+
     const [_, movie_id] = location.hash.split('='); // ['#movie', '234567']
     getMovieDetails(movie_id);
     getAndAppendMovies(`movie/${movie_id}/similar`, relatedMoviesContainer);

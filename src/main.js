@@ -52,7 +52,7 @@ async function getMovieDetails(movie_id) {
         ),
         url('https://image.tmdb.org/t/p/w500/${data.poster_path}')
     `;
-
+    
     movieDetailTitle.textContent = data.title;
     movieDetailDescription.textContent = data.overview;
     movieDetailScore.textContent = data.vote_average;
