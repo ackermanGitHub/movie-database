@@ -19,6 +19,14 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazy
     const {data} = await api(path, optionalConfig);
     const movies = data.results;
 
+    if (movies.length === 0) {
+        parentSection.innerHTML = '';
+        const movieContainer = document.createElement('h3');
+        movieContainer.textContent = 'No se encontró ningún resultado';
+        parentSection.appendChild(movieContainer);
+        return;
+    }
+
     parentSection.innerHTML = '';
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
@@ -29,8 +37,17 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazy
         movieImg.setAttribute('alt', movie.title);
         movieImg.setAttribute(
             lazyLoad ? 'data-img' : 'src', 
-            'https://image.tmdb.org/t/p/w300/' + movie.poster_path
+            'https://image.tmdb.org/t/p/w500/' + movie.poster_path
         );
+        movieImg.addEventListener('error', () => {
+            movieImg.setAttribute(
+                'src',
+                'https://static.platzi.com/static/images/error/img404.png',    
+            );
+            setTimeout(() => {
+                movieContainer.innerHTML += '<h2>Error, la imagen no arroja ningún resultado</h2>';
+            }, 0);
+        });
 
         if (lazyLoad) {
             lazyLoader.observe(movieImg);
@@ -41,7 +58,7 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazy
 
         movieContainer.addEventListener('click', () => {
             location.hash = '#movie=' + movie.id;
-        })
+        });
     });
 }
 

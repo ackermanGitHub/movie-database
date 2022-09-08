@@ -88,7 +88,7 @@ function movieDetailsPage() {
 
     const [_, movie_id] = location.hash.split('='); // ['#movie', '234567']
     getMovieDetails(movie_id);
-    getAndAppendMovies(`movie/${movie_id}/similar`, relatedMoviesContainer);
+    getAndAppendMovies(`movie/${movie_id}/similar`, relatedMoviesContainer, {}, true);
 }
 function searchPage() {
     headerSection.classList.remove('header-container--long');
@@ -108,7 +108,7 @@ function searchPage() {
         params: {
             query,
         },
-    });
+    }, true);
 }
 function trendsPage() {
     headerSection.classList.remove('header-container--long');
@@ -124,5 +124,5 @@ function trendsPage() {
     movieDetailSection.classList.add('inactive');
 
     headerCategoryTitle.innerHTML = 'Tendencias';
-    getAndAppendMovies('trending/movie/day', genericSection);
+    getAndAppendMovies('trending/movie/day', genericSection, {}, true);
 }
