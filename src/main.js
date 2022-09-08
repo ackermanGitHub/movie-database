@@ -15,9 +15,10 @@ async function getCategoriesPreview() {
     printCategories(categoriesPreviewList, categories);
 }
 
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazyLoad = false) {
+async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true, nextBtn = false, currentPage = 1} = {}) {
     const {data} = await api(path, optionalConfig);
     const movies = data.results;
+    const {params} = optionalConfig;
 
     if (movies.length === 0) {
         parentSection.innerHTML = '';
@@ -27,39 +28,11 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazy
         return;
     }
 
-    parentSection.innerHTML = '';
-    movies.forEach(movie => {
-        const movieContainer = document.createElement('div');
-        movieContainer.classList.add('movie-container');
+    printMovies(movies, parentSection, {lazyLoad, clean});
 
-        const movieImg = document.createElement('img');
-        movieImg.classList.add('movie-img');
-        movieImg.setAttribute('alt', movie.title);
-        movieImg.setAttribute(
-            lazyLoad ? 'data-img' : 'src', 
-            'https://image.tmdb.org/t/p/w500/' + movie.poster_path
-        );
-        movieImg.addEventListener('error', () => {
-            movieImg.setAttribute(
-                'src',
-                'https://static.platzi.com/static/images/error/img404.png',    
-            );
-            setTimeout(() => {
-                movieContainer.innerHTML += '<h2>Error, la imagen no arroja ningún resultado</h2>';
-            }, 0);
-        });
-
-        if (lazyLoad) {
-            lazyLoader.observe(movieImg);
-        }
-
-        movieContainer.appendChild(movieImg);
-        parentSection.appendChild(movieContainer);
-
-        movieContainer.addEventListener('click', () => {
-            location.hash = '#movie=' + movie.id;
-        });
-    });
+    if (nextBtn) {
+        createNextBtn(path, parentSection, params,  currentPage);
+    }
 }
 
 async function getMovieDetails(movie_id) {
@@ -109,7 +82,6 @@ function printCategories(parent, categories) {
         parent.appendChild(categoryContainer);
     });  
 }
-
 function createObserver() {
     return new IntersectionObserver( entries => {
         entries.forEach(element => {
@@ -117,88 +89,7 @@ function createObserver() {
         })
     });
 }
-
-// I Fucked Up Here
-/* 
-
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazyLoad = false) {
-    const {data} = await api(path, optionalConfig);
-    const movies = data.results;
-
-    if (movies.length === 0) {
-        parentSection.innerHTML = '';
-        const movieContainer = document.createElement('h3');
-        movieContainer.textContent = 'No se encontró ningún resultado';
-        parentSection.appendChild(movieContainer);
-        return;
-    }
-
-    parentSection.innerHTML = '';
-    movies.forEach(movie => {
-        const movieContainer = document.createElement('div');
-        movieContainer.classList.add('movie-container');
-
-        const movieImg = document.createElement('img');
-        movieImg.classList.add('movie-img');
-        movieImg.setAttribute('alt', movie.title);
-        movieImg.setAttribute(
-            lazyLoad ? 'data-img' : 'src', 
-            'https://image.tmdb.org/t/p/w500/' + movie.poster_path
-        );
-        movieImg.addEventListener('error', () => {
-            movieImg.setAttribute(
-                'src',
-                'https://static.platzi.com/static/images/error/img404.png',    
-            );
-            setTimeout(() => {
-                movieContainer.innerHTML += '<h2>Error, la imagen no arroja ningún resultado</h2>';
-            }, 0);
-        });
-
-        if (lazyLoad) {
-            lazyLoader.observe(movieImg);
-        }
-
-        movieContainer.appendChild(movieImg);
-        parentSection.appendChild(movieContainer);
-
-        movieContainer.addEventListener('click', () => {
-            location.hash = '#movie=' + movie.id;
-        });
-    });
-}
-
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazyLoad = false, nextBtn = false, clean = true) {
-    const {data} = await api(path, optionalConfig);
-    const movies = data.results;
-
-    if (movies.length === 0) {
-        parentSection.innerHTML = '';
-        const movieContainer = document.createElement('h3');
-        movieContainer.textContent = 'No se encontró ningún resultado';
-        parentSection.appendChild(movieContainer);
-        return;
-    }
-
-    printMovies(parentSection, movies, lazyLoad, clean);
-    if (nextBtn) {
-        createNextBtn(path, parentSection)        
-    }
-}
-
-function createNextBtn(path, parentSection) {
-    const nextPageBtn = document.createElement('button');
-    nextPageBtn.innerText = 'Next';
-    nextPageBtn.addEventListener('click', () => {
-        getAndAppendMovies(path, parentSection, {
-            params: {
-                page: 2,
-            },
-        }, true, true);
-    });
-    parentSection.appendChild(nextPageBtn);
-}
-function printMovies(parent, movies, lazyLoad = false, clean = false) {
+function printMovies(movies, parent, {lazyLoad = true, clean = true}) {
     if (clean) {
         parent.innerHTML = '';
     }
@@ -234,5 +125,56 @@ function printMovies(parent, movies, lazyLoad = false, clean = false) {
             location.hash = '#movie=' + movie.id;
         });
     });
+}
+function createNextBtn(path, parentSection, params = {}, currentPage = 1) {
+    const pageSpan = document.createElement('span');
+    pageSpan.innerText = 'Current Page = ' + currentPage;
+    const nextPageBtn = document.createElement('button');
+    nextPageBtn.innerText = 'Next';
+    nextPageBtn.addEventListener('click', () => {
+        parentSection.removeChild(pageSpan);
+        parentSection.removeChild(nextPageBtn);
+        getAndAppendMovies(path, parentSection, {
+            params: {
+                ...params,
+                page: currentPage + 1,
+            },
+        }, {clean: false, nextBtn: true, currentPage: currentPage+1});
+        pageSpan.innerText = 'Current Page = ' + currentPage;
+    });
+    parentSection.appendChild(pageSpan);
+    parentSection.appendChild(nextPageBtn);
+}
+// I Fucked Up Here
+/* 
+async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazyLoad = false, nextBtn = false, clean = true) {
+    const {data} = await api(path, optionalConfig);
+    const movies = data.results;
+
+    if (movies.length === 0) {
+        parentSection.innerHTML = '';
+        const movieContainer = document.createElement('h3');
+        movieContainer.textContent = 'No se encontró ningún resultado';
+        parentSection.appendChild(movieContainer);
+        return;
+    }
+
+    printMovies(parentSection, movies, lazyLoad, clean);
+    if (nextBtn) {
+        createNextBtn(path, parentSection)        
+    }
+}
+
+function createNextBtn(path, parentSection) {
+    const nextPageBtn = document.createElement('button');
+    nextPageBtn.innerText = 'Next';
+    nextPageBtn.addEventListener('click', () => {
+        getAndAppendMovies(path, parentSection, {
+            params: {
+                page: 2,
+            },
+        }, true, true);
+    });
+    parentSection.appendChild(nextPageBtn);
 }
 */

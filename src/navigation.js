@@ -46,7 +46,7 @@ function homePage() {
     genericSection.classList.add('inactive');
     movieDetailSection.classList.add('inactive');
 
-    getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList, {}, true);
+    getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList);
     getCategoriesPreview();
 }
 function categoriesPage() {
@@ -71,7 +71,7 @@ function categoriesPage() {
         params: {
             with_genres: categoryId,
         },
-    }, true);
+    }, {nextBtn: true});
 }
 function movieDetailsPage() {
     headerSection.classList.add('header-container--long');
@@ -88,7 +88,7 @@ function movieDetailsPage() {
 
     const [_, movie_id] = location.hash.split('='); // ['#movie', '234567']
     getMovieDetails(movie_id);
-    getAndAppendMovies(`movie/${movie_id}/similar`, relatedMoviesContainer, {}, true);
+    getAndAppendMovies(`movie/${movie_id}/similar`, relatedMoviesContainer);
 }
 function searchPage() {
     headerSection.classList.remove('header-container--long');
@@ -108,7 +108,7 @@ function searchPage() {
         params: {
             query,
         },
-    }, true);
+    });
 }
 function trendsPage() {
     headerSection.classList.remove('header-container--long');
@@ -124,5 +124,5 @@ function trendsPage() {
     movieDetailSection.classList.add('inactive');
 
     headerCategoryTitle.innerHTML = 'Tendencias';
-    getAndAppendMovies('trending/movie/day', genericSection, {}, true);
+    getAndAppendMovies('trending/movie/day', genericSection, {}, {nextBtn: true});
 }
