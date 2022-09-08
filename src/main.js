@@ -15,7 +15,7 @@ async function getCategoriesPreview() {
     printCategories(categoriesPreviewList, categories);
 }
 
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}) {
+async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazyLoad = false) {
     const {data} = await api(path, optionalConfig);
     const movies = data.results;
 
@@ -28,10 +28,14 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}) {
         movieImg.classList.add('movie-img');
         movieImg.setAttribute('alt', movie.title);
         movieImg.setAttribute(
-            'src', 
+            lazyLoad ? 'data-img' : 'src', 
             'https://image.tmdb.org/t/p/w300/' + movie.poster_path
         );
-    
+
+        if (lazyLoad) {
+            lazyLoader.observe(movieImg);
+        }
+
         movieContainer.appendChild(movieImg);
         parentSection.appendChild(movieContainer);
 
@@ -60,6 +64,15 @@ async function getMovieDetails(movie_id) {
     printCategories(movieDetailCategoriesList, data.genres);
 }
 
+const lazyLoader = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const url = entry.target.getAttribute('data-img');
+            entry.target.setAttribute('src', url);
+        }
+    });
+});
+
 // utils
 function printCategories(parent, categories) {
     parent.innerHTML = '';
@@ -78,4 +91,12 @@ function printCategories(parent, categories) {
         categoryContainer.appendChild(categoryTitle);
         parent.appendChild(categoryContainer);
     });  
+}
+
+function createObserver() {
+    return new IntersectionObserver( entries => {
+        entries.forEach(element => {
+            element.src = element.data-img;
+        })
+    });
 }

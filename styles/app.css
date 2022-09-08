@@ -3,6 +3,7 @@
 :root {
   --purple-light-1: #FBFAFB;
   --purple-light-2: #EEEAF2;
+  --purple-light-3: #DDCBEE;
   --purple-medium-1: #AA83C8;
   --purple-medium-2: #8B48BF;
   --purple-medium-3: #5C218A;
@@ -107,7 +108,7 @@ button {
 }
 
 .movie-container--loading {
-  background: var(--purple-light-2);
+  background: var(--purple-light-3);
   border-radius: 8px;
   height: 225px;
   min-height: 225px;
@@ -142,7 +143,7 @@ button {
 }
 
 .category-container--loading {
-  background: var(--purple-light-2);
+  background: var(--purple-light-3);
   border-radius: 8px;
   height: 25px;
   min-height: 25px;

@@ -46,7 +46,7 @@ function homePage() {
     genericSection.classList.add('inactive');
     movieDetailSection.classList.add('inactive');
 
-    getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList);
+    getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList, {}, true);
     getCategoriesPreview();
 }
 function categoriesPage() {
@@ -71,7 +71,7 @@ function categoriesPage() {
         params: {
             with_genres: categoryId,
         },
-    });
+    }, true);
 }
 function movieDetailsPage() {
     headerSection.classList.add('header-container--long');
