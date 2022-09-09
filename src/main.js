@@ -14,10 +14,9 @@ async function getCategoriesPreview() {
 
     printCategories(categoriesPreviewList, categories);
 }
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true/* , infiniteScroll = false */} = {}) {
+async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true} = {}) {
     const {data} = await api(path, optionalConfig);
     const movies = data.results;
-    const {params} = optionalConfig;
 
     if (movies.length === 0) {
         parentSection.innerHTML = '';
@@ -28,16 +27,23 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {laz
     }
     
     printMovies(movies, parentSection, {lazyLoad, clean});
-
-    /* 
-    if (infiniteScroll) {
-        window.addEventListener('scroll', () => {
-            scrollNextPage(path, parentSection, params);
-        }, false);
-    }  
-    */
 }
-
+async function scrollTrending() {
+    const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
+    if (scrollIsBottom) {
+        getAndAppendMovies('trending/movie/day', genericSection, {params: {page: currentPage}}, {lazyLoad: true, clean: false});
+        currentPage++;       
+    }
+} 
+async function scrollGenre() {
+    const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
+    if (scrollIsBottom) {
+        getAndAppendMovies('discover/movie', genericSection, {params: {page: currentPage, with_genres: genre_id}}, {lazyLoad: true, clean: false});
+        currentPage++;       
+    }
+}
 async function getMovieDetails(movie_id) {
     const {data} = await api('movie/' + movie_id);
 
@@ -57,6 +63,7 @@ async function getMovieDetails(movie_id) {
     printCategories(movieDetailCategoriesList, data.genres);
 }
 
+// utils
 const lazyLoader = new IntersectionObserver(entries => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -65,8 +72,6 @@ const lazyLoader = new IntersectionObserver(entries => {
         }
     });
 });
-
-// utils
 function printCategories(parent, categories) {
     parent.innerHTML = '';
     categories.forEach(category => {
@@ -122,9 +127,6 @@ function printMovies(movies, parent, {lazyLoad = true, clean = true} = {}) {
         });
     });
 }
-
-
-
 function createNextBtn(path, parentSection, params = {}) {
     const pageSpan = document.createElement('span');
     pageSpan.innerText = 'Current Page = ' + currentPage;
@@ -144,28 +146,3 @@ function createNextBtn(path, parentSection, params = {}) {
     parentSection.appendChild(pageSpan);
     parentSection.appendChild(nextPageBtn);
 }
-/* 
-    async function scrollNextPage(path, parentSection, params = {}) {
-        const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-        const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
-        if (scrollIsBottom) {
-            const {data} = await api(path, {
-                params: {
-                    ...params,
-                    page: currentPage + 1,
-                },
-            });
-            const movies = data.results;
-            currentPage++;
-            printMovies(movies, parentSection, {lazyLoad: true, clean: false});
-        }
-    } 
- */
-async function scrollTrending() {
-    const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
-    if (scrollIsBottom) {
-        getAndAppendMovies('trending/movie/day', genericSection, {params: {page: currentPage}}, {lazyLoad: true, clean: false});
-        currentPage++;       
-    }
-} 

@@ -1,5 +1,6 @@
-let currentPage = 1;
+let currentPage = 2;
 let scrollFn;
+let genre_id;
 searchFormBtn.addEventListener('click', () => {
     location.hash = '#search=' + searchFormInput.value;
 });
@@ -15,8 +16,9 @@ window.addEventListener('hashchange', navigator, false);
 
 function navigator() {
     if (scrollFn) {
-        window.removeEventListener('scroll', scrollFn, false);
+        window.removeEventListener('scroll', scrollFn, {passive: false});
         scrollFn = undefined;
+        currentPage = 1;
     }
 
     if (location.hash.startsWith('#trends'))
@@ -33,7 +35,7 @@ function navigator() {
     smoothscroll();
 
     if (scrollFn) {
-        window.addEventListener('scroll', scrollFn);
+        window.addEventListener('scroll', scrollFn,{passive: false});
     }
 }
 
@@ -82,7 +84,9 @@ function categoriesPage() {
         params: {
             with_genres: categoryId,
         },
-    }, {infiniteScroll: true});
+    });
+    genre_id = categoryId;
+    scrollFn = scrollGenre;
 }
 function movieDetailsPage() {
     headerSection.classList.add('header-container--long');
@@ -95,7 +99,6 @@ function movieDetailsPage() {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.add('inactive');
     movieDetailSection.classList.remove('inactive');
-
 
     const [_, movie_id] = location.hash.split('='); // ['#movie', '234567']
     getMovieDetails(movie_id);
@@ -135,6 +138,6 @@ function trendsPage() {
     movieDetailSection.classList.add('inactive');
 
     headerCategoryTitle.innerHTML = 'Tendencias';
-    getAndAppendMovies('trending/movie/day', genericSection, {}, {infiniteScroll: true});
+    getAndAppendMovies('trending/movie/day', genericSection, {}, {clean: true});
     scrollFn = scrollTrending;
 }
