@@ -33,7 +33,8 @@ async function scrollTrending() {
     const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 30);
     if (scrollIsBottom) {
         getAndAppendMovies('trending/movie/day', genericSection, {params: {page: currentPage}}, {lazyLoad: true, clean: false});
-        currentPage++;       
+        currentPage++;    
+        footerPageSpan.innerHTML = currentPage;   
     }
 } 
 async function scrollGenre() {
@@ -42,6 +43,7 @@ async function scrollGenre() {
     if (scrollIsBottom) {
         getAndAppendMovies('discover/movie', genericSection, {params: {page: currentPage, with_genres: genre_id}}, {lazyLoad: true, clean: false});
         currentPage++;       
+        footerPageSpan.innerHTML = currentPage;   
     }
 }
 async function getMovieDetails(movie_id) {
