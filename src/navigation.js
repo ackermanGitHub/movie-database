@@ -1,6 +1,7 @@
 let currentPage = 2;
 let scrollFn;
 let genre_id;
+
 searchFormBtn.addEventListener('click', () => {
     location.hash = '#search=' + searchFormInput.value;
 });
@@ -18,7 +19,7 @@ function navigator() {
     if (scrollFn) {
         window.removeEventListener('scroll', scrollFn, {passive: false});
         scrollFn = undefined;
-        currentPage = 1;
+        currentPage = 2;
     }
 
     if (location.hash.startsWith('#trends'))
@@ -35,7 +36,7 @@ function navigator() {
     smoothscroll();
 
     if (scrollFn) {
-        window.addEventListener('scroll', scrollFn,{passive: false});
+        window.addEventListener('scroll', scrollFn, {passive: false});
     }
 }
 
