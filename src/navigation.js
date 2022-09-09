@@ -1,3 +1,5 @@
+let currentPage = 1;
+let scrollFn;
 searchFormBtn.addEventListener('click', () => {
     location.hash = '#search=' + searchFormInput.value;
 });
@@ -12,6 +14,11 @@ window.addEventListener('DOMContentLoaded', navigator, false);
 window.addEventListener('hashchange', navigator, false);
 
 function navigator() {
+    if (scrollFn) {
+        window.removeEventListener('scroll', scrollFn, false);
+        scrollFn = undefined;
+    }
+
     if (location.hash.startsWith('#trends'))
         trendsPage();
     else if (location.hash.startsWith('#search='))
@@ -24,6 +31,10 @@ function navigator() {
         homePage();
     
     smoothscroll();
+
+    if (scrollFn) {
+        window.addEventListener('scroll', scrollFn);
+    }
 }
 
 function smoothscroll(){
@@ -125,4 +136,5 @@ function trendsPage() {
 
     headerCategoryTitle.innerHTML = 'Tendencias';
     getAndAppendMovies('trending/movie/day', genericSection, {}, {infiniteScroll: true});
+    scrollFn = scrollTrending;
 }

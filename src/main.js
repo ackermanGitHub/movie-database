@@ -14,8 +14,7 @@ async function getCategoriesPreview() {
 
     printCategories(categoriesPreviewList, categories);
 }
-let currentPage = 1;
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true, infiniteScroll = false} = {}) {
+async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true/* , infiniteScroll = false */} = {}) {
     const {data} = await api(path, optionalConfig);
     const movies = data.results;
     const {params} = optionalConfig;
@@ -30,13 +29,13 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {laz
     
     printMovies(movies, parentSection, {lazyLoad, clean});
 
-    
+    /* 
     if (infiniteScroll) {
         window.addEventListener('scroll', () => {
             scrollNextPage(path, parentSection, params);
-        });
-    } 
-   
+        }, false);
+    }  
+    */
 }
 
 async function getMovieDetails(movie_id) {
@@ -145,18 +144,28 @@ function createNextBtn(path, parentSection, params = {}) {
     parentSection.appendChild(pageSpan);
     parentSection.appendChild(nextPageBtn);
 }
-async function scrollNextPage(path, parentSection, params = {}) {
+/* 
+    async function scrollNextPage(path, parentSection, params = {}) {
+        const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+        const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
+        if (scrollIsBottom) {
+            const {data} = await api(path, {
+                params: {
+                    ...params,
+                    page: currentPage + 1,
+                },
+            });
+            const movies = data.results;
+            currentPage++;
+            printMovies(movies, parentSection, {lazyLoad: true, clean: false});
+        }
+    } 
+ */
+async function scrollTrending() {
     const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
     const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
     if (scrollIsBottom) {
-        const {data} = await api(path, {
-            params: {
-                ...params,
-                page: currentPage + 1,
-            },
-        });
-        const movies = data.results;
-        currentPage++;
-        printMovies(movies, parentSection, {lazyLoad: true, clean: false});
+        getAndAppendMovies('trending/movie/day', genericSection, {params: {page: currentPage}}, {lazyLoad: true, clean: false});
+        currentPage++;       
     }
 } 
