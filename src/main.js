@@ -14,8 +14,8 @@ async function getCategoriesPreview() {
 
     printCategories(categoriesPreviewList, categories);
 }
-
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true, nextBtn = false, currentPage = 1} = {}) {
+let currentPage = 1;
+async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true, infiniteScroll = false} = {}) {
     const {data} = await api(path, optionalConfig);
     const movies = data.results;
     const {params} = optionalConfig;
@@ -27,12 +27,16 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {laz
         parentSection.appendChild(movieContainer);
         return;
     }
-
+    
     printMovies(movies, parentSection, {lazyLoad, clean});
 
-    if (nextBtn) {
-        createNextBtn(path, parentSection, params,  currentPage);
-    }
+    
+    if (infiniteScroll) {
+        window.addEventListener('scroll', () => {
+            scrollNextPage(path, parentSection, params);
+        });
+    } 
+   
 }
 
 async function getMovieDetails(movie_id) {
@@ -82,14 +86,7 @@ function printCategories(parent, categories) {
         parent.appendChild(categoryContainer);
     });  
 }
-function createObserver() {
-    return new IntersectionObserver( entries => {
-        entries.forEach(element => {
-            element.src = element.data-img;
-        })
-    });
-}
-function printMovies(movies, parent, {lazyLoad = true, clean = true}) {
+function printMovies(movies, parent, {lazyLoad = true, clean = true} = {}) {
     if (clean) {
         parent.innerHTML = '';
     }
@@ -102,7 +99,7 @@ function printMovies(movies, parent, {lazyLoad = true, clean = true}) {
         movieImg.setAttribute('alt', movie.title);
         movieImg.setAttribute(
             lazyLoad ? 'data-img' : 'src', 
-            'https://image.tmdb.org/t/p/w500/' + movie.poster_path
+            'https://image.tmdb.org/t/p/w300/' + movie.poster_path
         );
         movieImg.addEventListener('error', () => {
             movieImg.setAttribute(
@@ -126,7 +123,10 @@ function printMovies(movies, parent, {lazyLoad = true, clean = true}) {
         });
     });
 }
-function createNextBtn(path, parentSection, params = {}, currentPage = 1) {
+
+
+
+function createNextBtn(path, parentSection, params = {}) {
     const pageSpan = document.createElement('span');
     pageSpan.innerText = 'Current Page = ' + currentPage;
     const nextPageBtn = document.createElement('button');
@@ -145,36 +145,18 @@ function createNextBtn(path, parentSection, params = {}, currentPage = 1) {
     parentSection.appendChild(pageSpan);
     parentSection.appendChild(nextPageBtn);
 }
-// I Fucked Up Here
-/* 
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}, lazyLoad = false, nextBtn = false, clean = true) {
-    const {data} = await api(path, optionalConfig);
-    const movies = data.results;
-
-    if (movies.length === 0) {
-        parentSection.innerHTML = '';
-        const movieContainer = document.createElement('h3');
-        movieContainer.textContent = 'No se encontró ningún resultado';
-        parentSection.appendChild(movieContainer);
-        return;
-    }
-
-    printMovies(parentSection, movies, lazyLoad, clean);
-    if (nextBtn) {
-        createNextBtn(path, parentSection)        
-    }
-}
-
-function createNextBtn(path, parentSection) {
-    const nextPageBtn = document.createElement('button');
-    nextPageBtn.innerText = 'Next';
-    nextPageBtn.addEventListener('click', () => {
-        getAndAppendMovies(path, parentSection, {
+async function scrollNextPage(path, parentSection, params = {}) {
+    const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 15)
+    if (scrollIsBottom) {
+        const {data} = await api(path, {
             params: {
-                page: 2,
+                ...params,
+                page: currentPage + 1,
             },
-        }, true, true);
-    });
-    parentSection.appendChild(nextPageBtn);
-}
-*/
+        });
+        const movies = data.results;
+        currentPage++;
+        printMovies(movies, parentSection, {lazyLoad: true, clean: false});
+    }
+} 
