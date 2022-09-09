@@ -71,7 +71,7 @@ function categoriesPage() {
         params: {
             with_genres: categoryId,
         },
-    }, {nextBtn: true});
+    }, {infiniteScroll: true});
 }
 function movieDetailsPage() {
     headerSection.classList.add('header-container--long');
@@ -124,5 +124,5 @@ function trendsPage() {
     movieDetailSection.classList.add('inactive');
 
     headerCategoryTitle.innerHTML = 'Tendencias';
-    getAndAppendMovies('trending/movie/day', genericSection, {}, {nextBtn: true});
+    getAndAppendMovies('trending/movie/day', genericSection, {}, {infiniteScroll: true});
 }
