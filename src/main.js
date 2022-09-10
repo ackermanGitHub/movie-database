@@ -30,8 +30,9 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {laz
 }
 async function scrollTrending() {
     const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 30);
+    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight * 0.9);
     if (scrollIsBottom) {
+        console.log(currentPage);
         getAndAppendMovies('trending/movie/day', genericSection, {params: {page: currentPage}}, {lazyLoad: true, clean: false});
         currentPage++;    
         footerPageSpan.innerHTML = currentPage;   
@@ -39,8 +40,9 @@ async function scrollTrending() {
 } 
 async function scrollGenre() {
     const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 30);
+    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight * 0.9);
     if (scrollIsBottom) {
+        console.log(currentPage);
         getAndAppendMovies('discover/movie', genericSection, {params: {page: currentPage, with_genres: genre_id}}, {lazyLoad: true, clean: false});
         currentPage++;       
         footerPageSpan.innerHTML = currentPage;   
