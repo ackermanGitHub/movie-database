@@ -39,7 +39,7 @@ async function scrollTrending() {
 } 
 async function scrollGenre() {
     const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
-    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 30);
+    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 60);
     if (scrollIsBottom) {
         getAndAppendMovies('discover/movie', genericSection, {params: {page: currentPage, with_genres: genre_id}}, {lazyLoad: true, clean: false});
         currentPage++;       
