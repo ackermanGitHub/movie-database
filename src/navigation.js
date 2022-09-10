@@ -14,6 +14,7 @@ arrowBtn.addEventListener('click', () => {
 
 window.addEventListener('DOMContentLoaded', navigator, false);
 window.addEventListener('hashchange', navigator, false);
+window.addEventListener('scroll', scrollFn, {passive: false});
 
 function navigator() {
     if (scrollFn) {
@@ -139,6 +140,6 @@ function trendsPage() {
     movieDetailSection.classList.add('inactive');
     
     headerCategoryTitle.innerHTML = 'Tendencias';
-    getAndAppendMovies('trending/movie/day', genericSection, {}, {clean: true});
     scrollFn = scrollTrending;
+    getAndAppendMovies('trending/movie/day', genericSection, {}, {clean: true});
 }
