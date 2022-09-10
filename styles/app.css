@@ -295,6 +295,26 @@ button {
 #id10752 { --idColor: var(--lightBlue); }
 #id37 { --idColor: var(--darkBlue); }
 
+#id28-img { background-color: var(--yellow); }
+#id12-img { background-color: var(--red); }
+#id16-img { background-color: var(--green); }
+#id35-img { background-color: var(--lightBlue); }
+#id80-img { background-color: var(--darkBlue); }
+#id99-img { background-color: var(--purple-dark-1); }
+#id18-img { background-color: var(--purple-medium-1); }
+#id10751-img { background-color: var(--yellow); }
+#id14-img { background-color: var(--red); }
+#id36-img { background-color: var(--green); }
+#id27-img { background-color: var(--lightBlue); }
+#id10402-img { background-color: var(--darkBlue); }
+#id9648-img { background-color: var(--purple-dark-1); }
+#id10749-img { background-color: var(--purple-medium-1); }
+#id878-img { background-color: var(--yellow); }
+#id10770-img { background-color: var(--red); }
+#id53-img { background-color: var(--green); }
+#id10752-img { background-color: var(--lightBlue); }
+#id37-img { background-color: var(--darkBlue); }
+
 
 /* Generic List (search, trending & category) */
 .genericList-container {
