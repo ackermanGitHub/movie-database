@@ -1,6 +1,8 @@
-let currentPage = 2;
+let currentPage = 1;
+let maxPages;
 let scrollFn;
 let genre_id;
+let searchValue;
 
 searchFormBtn.addEventListener('click', () => {
     location.hash = '#search=' + searchFormInput.value;
@@ -34,7 +36,6 @@ function navigator() {
     else
         homePage();
     
-    smoothscroll();
 
     if (scrollFn) {
         window.addEventListener('scroll', scrollFn, {passive: false});
@@ -42,11 +43,7 @@ function navigator() {
 }
 
 function smoothscroll(){
-    const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
-    if (currentScroll > 0) {
-         window.requestAnimationFrame(smoothscroll);
-         window.scrollTo (0,currentScroll - (currentScroll/5));
-    }
+    
 }
 
 function homePage() {
@@ -81,14 +78,13 @@ function categoriesPage() {
     const [categoryId, categoryName] = categoryData.split('-');
 
     headerCategoryTitle.innerHTML = decodeURIComponent(categoryName);
-
+    scrollFn = scrollGenre;
     getAndAppendMovies('discover/movie', genericSection, {
         params: {
             with_genres: categoryId,
         },
     });
     genre_id = categoryId;
-    scrollFn = scrollGenre;
 }
 function movieDetailsPage() {
     headerSection.classList.add('header-container--long');
@@ -120,11 +116,13 @@ function searchPage() {
     movieDetailSection.classList.add('inactive');
 
     const [_, query] = location.hash.split('=');
+    scrollFn = scrollSearchPage;
+    searchValue = query;
     getAndAppendMovies('search/movie', genericSection, {
         params: {
             query,
         },
-    });
+    }, {clean: true});
 }
 function trendsPage() {
     headerSection.classList.remove('header-container--long');

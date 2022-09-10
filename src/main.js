@@ -17,11 +17,12 @@ async function getCategoriesPreview() {
 async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true} = {}) {
     const {data} = await api(path, optionalConfig);
     const movies = data.results;
+    maxPages = data.total_pages;
 
     if (movies.length === 0) {
         parentSection.innerHTML = '';
         const movieContainer = document.createElement('h3');
-        movieContainer.textContent = 'No se encontró ningún resultado';
+        movieContainer.textContent += 'No se encontró ningún resultado';
         parentSection.appendChild(movieContainer);
         return;
     }
@@ -31,8 +32,7 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {laz
 async function scrollTrending() {
     const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
     const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 60);
-    if (scrollIsBottom) {
-        headerCategoryTitle.innerText += currentPage;
+    if (scrollIsBottom && (currentPage < maxPages)) {
         getAndAppendMovies('trending/movie/day', genericSection, {params: {page: currentPage}}, {lazyLoad: true, clean: false});
         currentPage++;     
     }
@@ -43,6 +43,19 @@ async function scrollGenre() {
     if (scrollIsBottom) {
         getAndAppendMovies('discover/movie', genericSection, {params: {page: currentPage, with_genres: genre_id}}, {lazyLoad: true, clean: false});
         currentPage++;       
+    }
+}
+async function scrollSearchPage() {
+    const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
+    const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 30);
+    if (scrollIsBottom && (currentPage <= maxPages)) {
+        getAndAppendMovies('search/movie', genericSection, {params: {page: currentPage, query: searchValue}}, {lazyLoad: true, clean: false});
+        currentPage++;       
+    } else if ((currentPage === maxPages)) {
+        const movieContainer = document.createElement('h3');
+        movieContainer.textContent += 'No se encontró más ningún resultado';
+        genericSection.appendChild(movieContainer);
+        window.removeEventListener('scroll', scrollFn, {passive: false});
     }
 }
 async function getMovieDetails(movie_id) {
