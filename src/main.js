@@ -32,6 +32,7 @@ async function scrollTrending() {
     const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
     const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 30);
     if (scrollIsBottom) {
+        headerCategoryTitle.innerText += 1;
         getAndAppendMovies('trending/movie/day', genericSection, {params: {page: currentPage}}, {lazyLoad: true, clean: false});
         currentPage++;     
     }
