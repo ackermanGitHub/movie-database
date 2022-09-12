@@ -8,6 +8,27 @@ const api = axios.create({
     },
 });
 
+function likedMovieList(){
+    const item = JSON.parse(localStorage.getItem('liked_movies'));
+    let movies;
+    if (item) {
+        movies = item;
+    } else {
+        movies = {};
+    }
+    return movies;
+}
+
+function likeMovie(movie) {
+    const likedMovies = likedMovieList();
+    if (likedMovies[movie.id]) {
+        likedMovies[movie.id] = undefined;
+    } else {
+        likedMovies[movie.id] = movie;
+    }    
+    localStorage.setItem('liked_movies', JSON.stringify(likedMovies));
+}
+
 async function getCategoriesPreview() {
     const {data} = await api('genre/movie/list');
     const categories = data.genres;
@@ -120,17 +141,24 @@ function printMovies(movies, parent, {lazyLoad = true, clean = true} = {}) {
                 lazyLoad ? 'data-img' : 'src', 
                 'https://image.tmdb.org/t/p/w300/' + movie.poster_path
             );
+            movieImg.addEventListener('click', () => {
+                location.hash = '#movie=' + movie.id;
+            });
+
+            const movieBtn = document.createElement('button');
+            movieBtn.classList.add('movie-btn');
+            movieBtn.addEventListener('click', ()=>{
+                movieBtn.classList.toggle('movie-btn--liked');
+                likeMovie(movie);
+            });
     
             if (lazyLoad) {
                 lazyLoader.observe(movieImg);
             }
     
             movieContainer.appendChild(movieImg);
+            movieContainer.appendChild(movieBtn);
             parent.appendChild(movieContainer);
-    
-            movieContainer.addEventListener('click', () => {
-                location.hash = '#movie=' + movie.id;
-            });
         }
     });
 }
