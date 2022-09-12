@@ -35,8 +35,9 @@ function navigator() {
         categoriesPage();
     else
         homePage();
-    
 
+    smoothscroll()
+        
     if (scrollFn) {
         window.addEventListener('scroll', scrollFn, {passive: false});
     }
