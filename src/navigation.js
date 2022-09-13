@@ -1,8 +1,6 @@
-let currentPage = 1;
+let page = 1;
 let maxPages;
 let scrollFn;
-let genre_id;
-let searchValue;
 
 searchFormBtn.addEventListener('click', () => {
     location.hash = '#search=' + searchFormInput.value;
@@ -22,7 +20,7 @@ function navigator() {
     if (scrollFn) {
         window.removeEventListener('scroll', scrollFn, {passive: false});
         scrollFn = undefined;
-        currentPage = 2;
+        page = 1;
     }
 
     if (location.hash.startsWith('#trends'))
@@ -40,14 +38,6 @@ function navigator() {
         
     if (scrollFn) {
         window.addEventListener('scroll', scrollFn, {passive: false});
-    }
-}
-
-function smoothscroll(){
-    const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
-    if (currentScroll > 0) {
-         window.requestAnimationFrame(smoothscroll);
-         window.scrollTo (0,currentScroll - (currentScroll/5));
     }
 }
 
@@ -86,13 +76,12 @@ function categoriesPage() {
     const [categoryId, categoryName] = categoryData.split('-');
 
     headerCategoryTitle.innerHTML = decodeURIComponent(categoryName);
-    scrollFn = scrollGenre;
+    scrollFn = scrollSection('discover/movie', categoryId);
     getAndAppendMovies('discover/movie', genericSection, {
         params: {
             with_genres: categoryId,
         },
     });
-    genre_id = categoryId;
 }
 function movieDetailsPage() {
     headerSection.classList.add('header-container--long');
@@ -126,8 +115,7 @@ function searchPage() {
     movieDetailSection.classList.add('inactive');
 
     const [_, query] = location.hash.split('=');
-    scrollFn = scrollSearchPage;
-    searchValue = query;
+    scrollFn = scrollSection('search/movie', query);
     getAndAppendMovies('search/movie', genericSection, {
         params: {
             query,
@@ -149,6 +137,14 @@ function trendsPage() {
     movieDetailSection.classList.add('inactive');
     
     headerCategoryTitle.innerHTML = 'Tendencias';
-    scrollFn = scrollTrending;
+    scrollFn = scrollSection('trending/movie/day');
     getAndAppendMovies('trending/movie/day', genericSection);
+}
+
+function smoothscroll(){
+    const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
 }
