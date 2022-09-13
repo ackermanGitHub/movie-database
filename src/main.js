@@ -18,7 +18,6 @@ function likedMovieList(){
     }
     return movies;
 }
-
 function likeMovie(movie) {
     const likedMovies = likedMovieList();
     if (likedMovies[movie.id]) {
@@ -29,8 +28,8 @@ function likeMovie(movie) {
     localStorage.setItem('liked_movies', JSON.stringify(likedMovies));
     if (location.hash == ''){
         getLikedMovies();
-        getAndAppendMovies('trending/movie/day', genericSection);
-  }
+        getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList);
+    }
 }
 
 async function getCategoriesPreview() {
