@@ -76,7 +76,7 @@ function categoriesPage() {
     const [categoryId, categoryName] = categoryData.split('-');
 
     headerCategoryTitle.innerHTML = decodeURIComponent(categoryName);
-    scrollFn = scrollSection('discover/movie', categoryId);
+    scrollFn = scrollSection('discover/movie', {with_genres: categoryId});
     getAndAppendMovies('discover/movie', genericSection, {
         params: {
             with_genres: categoryId,
@@ -115,7 +115,7 @@ function searchPage() {
     movieDetailSection.classList.add('inactive');
 
     const [_, query] = location.hash.split('=');
-    scrollFn = scrollSection('search/movie', query);
+    scrollFn = scrollSection('search/movie', {query});
     getAndAppendMovies('search/movie', genericSection, {
         params: {
             query,

@@ -14,11 +14,10 @@ async function getCategoriesPreview() {
 
     printCategories(categoriesPreviewList, categories);
 }
-async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true} = {}) {
+async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {lazyLoad = true, clean = true} = {}) {    
     const {data} = await api(path, optionalConfig);
     const movies = data.results;
     maxPages = data.total_pages;
-    
     printMovies(movies, parentSection, {lazyLoad, clean});
 }
 async function getMovieDetails(movie_id) {
@@ -40,16 +39,16 @@ async function getMovieDetails(movie_id) {
     printCategories(movieDetailCategoriesList, data.genres);
 }
 
-function scrollSection(path, query) {
+function scrollSection(path, props = {}) {
     return async function () {
         if (scrollIsBottom() && pageIsNotMax()) {
             page++;  
             const {data} = await api(path, {
                 params: {
                     page,
-                    query,
+                    ...props,
                 },
-            });     
+            });
             const movies = data.results;
             printMovies(movies, genericSection, {clean: false});
         }
