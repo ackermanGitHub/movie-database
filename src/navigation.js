@@ -44,7 +44,11 @@ function navigator() {
 }
 
 function smoothscroll(){
-    
+    const currentScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    if (currentScroll > 0) {
+         window.requestAnimationFrame(smoothscroll);
+         window.scrollTo (0,currentScroll - (currentScroll/5));
+    }
 }
 
 function homePage() {
@@ -62,6 +66,7 @@ function homePage() {
 
     getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList);
     getCategoriesPreview();
+    getLikedMovies();
 }
 function categoriesPage() {
     headerSection.classList.remove('header-container--long');
@@ -145,5 +150,5 @@ function trendsPage() {
     
     headerCategoryTitle.innerHTML = 'Tendencias';
     scrollFn = scrollTrending;
-    getAndAppendMovies('trending/movie/day', genericSection, {}, {clean: true});
+    getAndAppendMovies('trending/movie/day', genericSection);
 }

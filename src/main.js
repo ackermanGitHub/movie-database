@@ -27,6 +27,10 @@ function likeMovie(movie) {
         likedMovies[movie.id] = movie;
     }    
     localStorage.setItem('liked_movies', JSON.stringify(likedMovies));
+    if (location.hash == ''){
+        getLikedMovies();
+        getAndAppendMovies('trending/movie/day', genericSection);
+  }
 }
 
 async function getCategoriesPreview() {
@@ -50,6 +54,7 @@ async function getAndAppendMovies(path, parentSection, optionalConfig = {}, {laz
     
     printMovies(movies, parentSection, {lazyLoad, clean});
 }
+
 async function scrollTrending() {
     const {scrollTop, scrollHeight, clientHeight} = document.documentElement;
     const scrollIsBottom = (scrollTop + clientHeight) >= (scrollHeight - 60);
@@ -79,6 +84,7 @@ async function scrollSearchPage() {
         window.removeEventListener('scroll', scrollFn, {passive: false});
     }
 }
+
 async function getMovieDetails(movie_id) {
     const {data} = await api('movie/' + movie_id);
 
@@ -147,6 +153,7 @@ function printMovies(movies, parent, {lazyLoad = true, clean = true} = {}) {
 
             const movieBtn = document.createElement('button');
             movieBtn.classList.add('movie-btn');
+            likedMovieList()[movie.id] && movieBtn.classList.add('movie-btn--liked');
             movieBtn.addEventListener('click', ()=>{
                 movieBtn.classList.toggle('movie-btn--liked');
                 likeMovie(movie);
@@ -162,22 +169,8 @@ function printMovies(movies, parent, {lazyLoad = true, clean = true} = {}) {
         }
     });
 }
-function createNextBtn(path, parentSection, params = {}) {
-    const pageSpan = document.createElement('span');
-    pageSpan.innerText = 'Current Page = ' + currentPage;
-    const nextPageBtn = document.createElement('button');
-    nextPageBtn.innerText = 'Next';
-    nextPageBtn.addEventListener('click', () => {
-        parentSection.removeChild(pageSpan);
-        parentSection.removeChild(nextPageBtn);
-        getAndAppendMovies(path, parentSection, {
-            params: {
-                ...params,
-                page: currentPage + 1,
-            },
-        }, {clean: false, nextBtn: true, currentPage: currentPage+1});
-        pageSpan.innerText = 'Current Page = ' + currentPage;
-    });
-    parentSection.appendChild(pageSpan);
-    parentSection.appendChild(nextPageBtn);
+function getLikedMovies() {
+    const likedMovies = likedMovieList();
+    const favMoviesArray = Object.values(likedMovies);
+    printMovies(favMoviesArray, favouriteMoviesContainer, {lazyLoad: true, clean: true});
 }
