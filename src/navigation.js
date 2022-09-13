@@ -1,5 +1,6 @@
 let page = 1;
 let maxPages;
+let favMoviesArray;
 let scrollFn;
 
 searchFormBtn.addEventListener('click', () => {

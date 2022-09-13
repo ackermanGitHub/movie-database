@@ -57,7 +57,7 @@ function scrollSection(path, props = {}) {
 
 function getLikedMovies() {
     const likedMovies = likedMovieList();
-    const favMoviesArray = Object.values(likedMovies);
+    favMoviesArray = Object.values(likedMovies);
     printMovies(favMoviesArray, favouriteMoviesContainer, {lazyLoad: true, clean: true});
 }
 function likedMovieList(){
