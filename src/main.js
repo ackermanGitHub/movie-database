@@ -80,7 +80,7 @@ function likeMovie(movie) {
     localStorage.setItem('liked_movies', JSON.stringify(likedMovies));
     if (location.hash == ''){
         getLikedMovies();
-        getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList);
+        //getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList);
     }
 }
 
@@ -126,6 +126,7 @@ function printMovies(movies, parent, {lazyLoad = true, clean = true} = {}) {
             likedMovieList()[movie.id] && movieBtn.classList.add('movie-btn--liked');
             movieBtn.addEventListener('click', ()=>{
                 movieBtn.classList.toggle('movie-btn--liked');
+                checkFavChanges(parent, movie);
                 likeMovie(movie);
             });
     
@@ -156,4 +157,11 @@ function printCategories(parent, categories) {
         categoryContainer.appendChild(categoryTitle);
         parent.appendChild(categoryContainer);
     });  
+}
+function checkFavChanges(parent, movie) {
+    if (parent === favouriteMoviesContainer) {
+        //getAndAppendMovies('trending/movie/week', trendingMoviesPreviewList);
+        const pressBtn = document.querySelector(`.${trendingMoviesPreviewList.classList} #btn${movie.id}`);
+        pressBtn.classList.toggle('movie-btn--liked');
+    }
 }
