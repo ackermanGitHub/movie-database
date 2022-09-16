@@ -1,2 +1,4 @@
-# movie-database
-Movie Database Aplication using TheMovieDB APIs
+## Movie-API
+> API from theMovieDB 
+
+*Movie Database Aplication using TheMovieDB APIs*
